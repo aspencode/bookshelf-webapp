@@ -4,7 +4,6 @@ import {
   Column,
   OneToMany,
   CreateDateColumn,
-  UpdateDateColumn,
 } from 'typeorm';
 import { Book } from '../../books/entities/book.entity';
 
@@ -28,6 +27,4 @@ export class User {
   @CreateDateColumn()
   createdAt: Date;
 
-  @UpdateDateColumn()
-  updatedAt: Date;
 }
