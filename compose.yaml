@@ -26,6 +26,15 @@ services:
       - .env
     ports:
       - "3000:3000"
-
+    
+  frontend:
+    build: ./frontend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+    environment:
+      - WDS_SOCKET_PORT=0
 volumes:
   pgdata:
