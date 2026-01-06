@@ -15,6 +15,9 @@ export class Book {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column()
+  userId: number;
+
   @ManyToOne(() => User, (user) => user.books, { onDelete: 'CASCADE' })
   user: User; 
 
