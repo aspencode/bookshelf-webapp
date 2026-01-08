@@ -8,6 +8,9 @@ export class CreateBookDto {
   @ApiProperty({ example: 'Andrzej Sapkowski', description: 'Book author' })
   author: string;
 
+  @ApiPropertyOptional({ example: '978-8375900934', description: 'ISBN number' })
+  isbn?: string;
+
   @ApiProperty({ 
     enum: BookFormat, 
     example: BookFormat.PHYSICAL, 
@@ -17,9 +20,6 @@ export class CreateBookDto {
 
   @ApiPropertyOptional({ example: 320, description: 'page amount / minutes' })
   length?: number;
-
-  @ApiPropertyOptional({ example: '978-8375900934', description: 'ISBN number' })
-  isbn?: string;
 
   @ApiPropertyOptional({ example: 'https://link.org/img.jpg', description: 'Link to cover image' })
   coverUrl?: string;
@@ -34,4 +34,17 @@ export class CreateBookDto {
 
   @ApiPropertyOptional({ example: 'Great book!', description: 'Review text' })
   reviewText?: string;
+
+  @ApiPropertyOptional({ example: 150, description: 'Bookmark position (page number or minutes)' })
+  bookmarkPosition?: number;
+
+  @ApiPropertyOptional({ example: '2023-01-15', description: 'Start date (YYYY-MM-DD)' })
+  startedAt?: Date;
+  
+  @ApiPropertyOptional({ example: '2024-02-10', description: 'Finish date (YYYY-MM-DD)' })
+  finishedAt?: Date;
+
+  @ApiPropertyOptional({ example: '2024-02-10', description: 'Last read date (YYYY-MM-DD)' })
+  lastReadAt?: Date;
+
 }
