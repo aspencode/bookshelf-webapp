@@ -2,13 +2,13 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { BookFormat } from '../enums/book-format.enum';
 
 export class CreateBookDto {
-  @ApiProperty({ example: 'Wiedźmin: Ostatnie życzenie', description: 'Book title' })
+  @ApiProperty({ example: 'The Witcher: The Last Wish', description: 'Book title' })
   title: string;
 
   @ApiProperty({ example: 'Andrzej Sapkowski', description: 'Book author' })
   author: string;
 
-  @ApiPropertyOptional({ example: '978-8375900934', description: 'ISBN number' })
+  @ApiPropertyOptional({ example: '9780316438964', description: 'ISBN number' })
   isbn?: string;
 
   @ApiProperty({ 
@@ -18,10 +18,10 @@ export class CreateBookDto {
   })
   format: BookFormat;
 
-  @ApiPropertyOptional({ example: 320, description: 'page amount / minutes' })
+  @ApiPropertyOptional({ example: 344, description: 'page amount / minutes' })
   length?: number;
 
-  @ApiPropertyOptional({ example: 'https://link.org/img.jpg', description: 'Link to cover image' })
+  @ApiPropertyOptional({ example: 'https://cdn.thestorygraph.com/5brpbfo7dnvo7ubq2dgvpsxpyuiq', description: 'Link to cover image' })
   coverUrl?: string;
 
   @ApiPropertyOptional({ 
@@ -35,7 +35,7 @@ export class CreateBookDto {
   @ApiPropertyOptional({ example: 'Great book!', description: 'Review text' })
   reviewText?: string;
 
-  @ApiPropertyOptional({ example: 150, description: 'Bookmark position (page number or minutes)' })
+  @ApiPropertyOptional({ example: 344, description: 'Bookmark position (page number or minutes)' })
   bookmarkPosition?: number;
 
   @ApiPropertyOptional({ example: '2023-01-15', description: 'Start date (YYYY-MM-DD)' })

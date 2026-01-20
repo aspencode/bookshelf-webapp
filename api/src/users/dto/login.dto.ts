@@ -5,5 +5,5 @@ export class LoginDto {
   username: string;
 
   @ApiProperty({ example: 'passwoerd123', description: 'Password' })
-  password?: string; // TODO: make required in the future
+  password: string;
 }
