@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-
+import axios from 'axios';
 
 interface RouteParams {
   username: string;
@@ -10,7 +10,37 @@ interface RouteParams {
 const BookshelfPage: React.FC = () => {
   // useParams takes username from url (/bookshelf/:username)
   const { username } = useParams<RouteParams>();
+  const [userExists, setUserExists] = useState<boolean | null>(null); // null = loading
+  const [loading, setLoading] = useState(true);
+  
+  useEffect(() => {
+    if (!username) return;
 
+    setLoading(true);
+    axios
+      .get(`/users/${username}`) // call backend endpoint
+      .then(() => {
+        setUserExists(true); setLoading(false);
+      })
+      .catch(() => {
+        setUserExists(false); setLoading(false);
+      });
+  }, [username]);
+
+  if (loading) {
+    return <p style={{ textAlign: 'center', marginTop: '2rem' }}>Loading...</p>;
+  }
+
+  if (userExists === false) {
+    return (
+      <div style={{ padding: '2rem', textAlign: 'center' }}>
+        <h1>Error</h1>
+        <p>User <strong>{username}</strong> does not exist.</p>
+      </div>
+    );
+  }
+  
+ // userExists === true
   return (
     <div style={styles.container}>
       <header style={styles.header}>
