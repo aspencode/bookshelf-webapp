@@ -50,12 +50,15 @@ async findOne(@Param('id', ParseIntPipe) id: number) {
 
   @ApiBearerAuth('access-token') 
   @UseGuards(JwtAuthGuard)
-  @Patch()
+  @Patch(':id')
   @ApiOperation({ summary: 'Update a book in your library' })
   @ApiResponse({ status: 201, description: 'Book updated successfully' })
-  update(@Request() req: any, @Body() updateBookDto: UpdateBookDto) {
-    const myId = req.user.id; 
-    return this.booksService.update(myId, updateBookDto);
+  async update(
+    @Param('id', ParseIntPipe) bookId: number,
+    @Request() req,
+    @Body() updateBookDto: UpdateBookDto,
+  ) {
+    return this.booksService.update(req.user.id, bookId, updateBookDto);
   }
 
   @ApiBearerAuth('access-token')

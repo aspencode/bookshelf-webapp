@@ -53,14 +53,21 @@ async findOne(id: number): Promise<Book> {
     });
     return this.bookRepository.save(newBook);
   }
+  
 
-    async update(userId: number, updateBookDto: UpdateBookDto): Promise<Book> {
-    const newBook = this.bookRepository.create({
-      ...updateBookDto,
-      userId: userId,
-    });
-    return this.bookRepository.save(newBook);
+async update(userId: number, bookId: number, updateBookDto: UpdateBookDto): Promise<Book> {
+  const book = await this.bookRepository.findOne({
+    where: { id: bookId, userId: userId },
+  });
+
+  if (!book) {
+    throw new NotFoundException('Book not found or you do not have permission to edit it');
   }
+
+  Object.assign(book, updateBookDto);
+
+  return this.bookRepository.save(book);
+}
 
   async remove(userId: number, bookId: number): Promise<void> {
   const book = await this.bookRepository.findOne({
