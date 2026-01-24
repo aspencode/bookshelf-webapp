@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, NotFoundException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, NotFoundException, ParseIntPipe } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { AuthService } from '../auth/auth.service';
@@ -41,7 +41,19 @@ export class UsersController {
         if (!user) {
         throw new NotFoundException('User not found');
         }
-        return { username: user.username };
+        return { id: user.id, username: user.username };
+    }
+
+    @Get('id/:id')
+    @ApiOperation({ summary: 'Find a user by their ID' })
+    @ApiResponse({ status: 200, description: 'User found' })
+    @ApiResponse({ status: 404, description: 'User not found' })
+    async findById(@Param('id', ParseIntPipe) id: number) {
+        const user = await this.usersService.findById(id);
+        if (!user) {
+            throw new NotFoundException('User not found');
+        }
+        return { id: user.id, username: user.username };
     }
 
 }
