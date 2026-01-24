@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, NotFoundException } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { AuthService } from '../auth/auth.service';
@@ -30,6 +30,18 @@ export class UsersController {
     async register(@Body() createUserDto: CreateUserDto) {
         const user = await this.usersService.create(createUserDto);
         return this.authService.login(user);
+    }
+
+    @Get(':username')
+    @ApiOperation({ summary: 'Check if a user exists by username' })
+    @ApiResponse({ status: 200, description: 'User exists' })
+    @ApiResponse({ status: 404, description: 'User not found' })
+    async checkUserExists(@Param('username') username: string) {
+        const user = await this.usersService.findByUsername(username);
+        if (!user) {
+        throw new NotFoundException('User not found');
+        }
+        return { username: user.username };
     }
 
 }
