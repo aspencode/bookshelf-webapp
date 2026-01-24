@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link, useParams } from 'react-router-dom';
 import StarRating from './StarRating';
 
 interface Book {
@@ -14,7 +15,13 @@ interface BookCardProps {
 }
 
 const BookCard: React.FC<BookCardProps> = ({ book }) => {
-  return (
+    const { username } = useParams<{ username: string }>();
+  
+    return (
+    <Link 
+      to={`/bookshelf/${username}/${book.id}`} 
+      style={{ textDecoration: 'none', color: 'inherit' }}
+    > 
     <div style={cardStyles.bookCard}>
       <img 
         src={book.coverUrl || 'https://placehold.co/150x200?text=No+Cover'} 
@@ -30,6 +37,7 @@ const BookCard: React.FC<BookCardProps> = ({ book }) => {
         </div>
       </div>
     </div>
+     </Link>
   );
 };
 
@@ -39,10 +47,11 @@ const cardStyles = {
     borderRadius: '8px',
     overflow: 'hidden',
     boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
-    transition: 'transform 0.2s',
+    transition: 'transform 0.2s, box-shadow 0.2s',
     display: 'flex',
     flexDirection: 'column' as const,
     backgroundColor: '#fff',
+    cursor: 'pointer',
   },
   cover: { 
     width: '100%', 

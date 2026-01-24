@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import BookshelfPage from './pages/BookshelfPage';
+import BookDetailsPage from './pages/BookDetailsPage';
 import './App.css';
 
 
@@ -42,7 +43,7 @@ function App() {
           <Route path="/" element={<HomePage />} />
           
           <Route path="/bookshelf/:username" element={<BookshelfPage />} />
-          
+          <Route path="/bookshelf/:username/:bookId" element={<BookDetailsPage />} />
           <Route path="*" element={
             <div style={{ padding: '2rem', textAlign: 'center' }}>
               <h1>404</h1>
