@@ -12,12 +12,27 @@ export class BooksService {
     private readonly bookRepository: Repository<Book>,
   ) {}
 
-  async findAllByUserId(userId: number): Promise<Book[]> {
-    return this.bookRepository.find({
-      where: { userId: userId },
-      order: { addedAt: 'DESC' }, 
-    });
-  }
+async findAllByUserId(userId: number, page: number = 1, limit: number = 10) {
+  const skip = (page - 1) * limit;
+
+  const [data, total] = await this.bookRepository.findAndCount({
+    where: { userId: userId },
+    order: { addedAt: 'DESC' },
+    take: limit, 
+    skip: skip,    
+  });
+
+  return {
+    data,
+    meta: {
+      totalItems: total,
+      itemCount: data.length,
+      itemsPerPage: limit,
+      totalPages: Math.ceil(total / limit),
+      currentPage: page,
+    },
+  };
+}
 
   async create(userId: number, createBookDto: CreateBookDto): Promise<Book> {
     const newBook = this.bookRepository.create({
