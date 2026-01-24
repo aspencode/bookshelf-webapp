@@ -30,6 +30,14 @@ getAllBooks(
   return this.booksService.findAllByUserId(userId, validatedPage, safeLimit);
 }
 
+@Get('details/:id')
+@ApiOperation({ summary: 'Get full details of a specific book' })
+@ApiResponse({ status: 200, description: 'Book details returned successfully' })
+@ApiResponse({ status: 404, description: 'Book not found' })
+async findOne(@Param('id', ParseIntPipe) id: number) {
+  return this.booksService.findOne(id);
+}
+
   @ApiBearerAuth('access-token') 
   @UseGuards(JwtAuthGuard)
   @Post()
