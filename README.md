@@ -108,3 +108,45 @@ Once the containers are up and running, you can access the following interfaces:
 | Swagger UI  | http://localhost:3001/api-docs | Interactive API documentation and testing tool. |
 
 
+## Code and Configuration
+### Version Control
+
+The project is maintained in a Git repository hosted on GitHub.
+Git is used for:
+* tracking incremental development,
+* separating features into logical commits,
+* enabling reproducible builds and deployments.
+
+The repository contains both frontend and backend code in a single mono-repository, which simplifies development and deployment using Docker Compose.
+
+### Configuration Files
+
+The application relies on environment-based configuration.
+
+Key configuration files include:
+
+* .env – backend configuration (database, JWT secret, ports),
+* frontend/.env – frontend configuration (API base URL),
+* compose.dev.yaml – Docker Compose configuration for development,
+* compose.prod.yaml – Docker Compose configuration for production.
+
+Environment variables are used to avoid hardcoding sensitive data such as database credentials and secret keys.
+
+## Features
+### User and Library Features
+
+#### Public user libraries
+Every user has a publicly accessible bookshelf available under `/bookshelf/{username}`.
+Any visitor can browse a user’s collection without authentication.
+####  Book representation
+Each book represents a concrete copy owned by a user, including:
+* title and author,
+* format (physical, digital, audiobook),
+* reading progress,
+* rating and review text.
+#### Reading progress tracking
+The application supports tracking reading progress using:
+* bookmark position,
+* start and finish dates,
+* last read date,
+* visual progress indicators on the frontend.
