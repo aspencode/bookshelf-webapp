@@ -69,15 +69,22 @@ Docker Desktop on Windows requires WSL 2 (Windows Subsystem for Linux) to run co
 If you have git, you can clone the repository using this command in your terminal:
 ```
 git clone https://github.com/aspencode/bookshelf-webapp
+cd bookshelf-webapp
 ```
 If you don't have git, you can download the code manually using github's UI.
 ### Envinroment configuration
 Create a local environment file by copying the provided example. This file contains database credentials and API configuration.
 Replace the example values by your own as you wish.
 
+There are two envinroment files: one in the main folder (.) and one inside frontend (./frontend)
+
+
 ```
 cp .env.example .env
+cp ./frontend/.env-example ./frontend/.env
 ```
+
+
 ## Running the application
 ### Development mode
 Use this mode if you plan to modify the code. It includes hot-reload, so changes in your files will reflect immediately.
