@@ -156,6 +156,7 @@ The application supports tracking reading progress using:
 ```
 .
 ├── api
+├── assets
 ├── compose.dev.yaml
 ├── compose.prod.yaml
 ├── frontend
@@ -451,3 +452,10 @@ It interacts directly with the Book entity via a TypeORM repository.
     * ensures consistent behavior even when accessed concurrently.
 
 This service acts as the core of the application’s domain logic.
+
+# Visuals
+![BookCard-Example](assets/BookCard-Example.png)
+
+![BookDetailsPage-Example](assets/BookDetailsPage-Example.png)
+
+![BookshelfPage-Example](assets/BookshelfPage-Example.png)
