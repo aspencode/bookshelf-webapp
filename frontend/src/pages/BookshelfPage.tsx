@@ -51,7 +51,7 @@ const BookshelfPage: React.FC = () => {
         setUserExists(true);
 
         // get user's books with pagination
-        const booksRes = await axios.get<BooksResponse>(`/books/${userId}?page=${page}&limit=9`);
+        const booksRes = await axios.get<BooksResponse>(`/books/${userId}?page=${page}&limit=8`);
         setBooks(booksRes.data.data);
         setMeta(booksRes.data.meta);
       } catch (err) {
