@@ -476,3 +476,259 @@ Shows detailed information about a selected book, including extended metadata, r
 
 ![BookDetailsPage-Example](assets/BookDetailsPage-Example.png)
 
+# Detailed Feature Implementation
+## Public User Library Access with Pagination
+
+This section presents a detailed implementation of the public access to a user’s bookshelf with pagination, one of the core features of the Bookshelf application.
+The goal of this functionality is to allow any visitor to browse a user’s public book collection efficiently, without requiring authentication, while maintaining performance and data integrity.
+
+### Functional Overview
+
+Each registered user has a publicly accessible library available under the endpoint:
+
+```GET /books/:userId```
+
+
+This endpoint returns a paginated list of books owned by a given user. Pagination is mandatory to prevent excessive data transfer and to ensure scalability for large collections.
+
+*Key characteristics of this feature:*
+
+* public access (no authentication required),
+* page-based pagination,
+* safe limits enforced at the backend level
+
+### Request Flow
+
+1. The frontend sends a request containing:
+
+    * the user identifier (userId) as a route parameter,
+    * optional pagination parameters (page, limit).
+
+2. The request is handled by BooksController.
+
+3. Input parameters are validated and sanitized.
+
+4. Business logic is delegated to BooksService.
+
+5. Data is retrieved from the database using TypeORM.
+
+6. A structured response containing data and pagination metadata is returned to the client.
+
+### Controller Implementation
+
+The public endpoint is implemented in BooksController:
+```
+@Get(':userId')
+@ApiOperation({ summary: 'View any user’s library with pagination (max 100 items per page)' })
+@ApiQuery({ name: 'page', required: false, example: 1 })
+@ApiQuery({ name: 'limit', required: false, example: 10, description: 'Max 100 items' })
+@ApiResponse({ status: 200, description: 'List of books returned successfully' })
+getAllBooks(
+  @Param('userId', ParseIntPipe) userId: number,
+  @Query('page', new ParseIntPipe({ optional: true })) page: number = 1,
+  @Query('limit', new ParseIntPipe({ optional: true })) limit: number = 10,
+) {
+  // Prevent invalid page numbers
+  const validatedPage = page > 0 ? page : 1;
+
+  // Enforce safe pagination limits (1–100 items per page)
+  const safeLimit = limit > 0 ? Math.min(limit, 100) : 1;
+
+  return this.booksService.findAllByUserId(userId, validatedPage, safeLimit);
+}
+```
+*Key design decisions:*
+* ParseIntPipe ensures type safety at the framework level.
+* Pagination parameters are validated defensively.
+* A hard limit of 100 items per page protects the API from abuse.
+
+### Service Implementation
+
+The actual data retrieval logic is implemented in BooksService:
+
+```
+async findAllByUserId(userId: number, page: number = 1, limit: number = 10) {
+  const skip = (page - 1) * limit;
+
+  const [data, total] = await this.bookRepository.findAndCount({
+    where: { userId: userId },
+    order: { addedAt: 'DESC' },
+    take: limit,
+    skip: skip,
+  });
+
+  return {
+    data,
+    meta: {
+      totalItems: total,
+      itemCount: data.length,
+      itemsPerPage: limit,
+      totalPages: Math.ceil(total / limit),
+      currentPage: page,
+    },
+  };
+}
+```
+
+
+*Explanation:*
+
+* findAndCount() retrieves both the requested page data and the total number of records in a single database query.
+* Results are sorted by creation date (addedAt DESC), ensuring consistent ordering.
+* Pagination metadata allows the frontend to render navigation controls and page indicators.
+
+### Response Structure
+
+*Response structure - JSON code*
+```
+{
+  "data": [
+    {
+      "id": 12,
+      "title": "The Witcher: The Last Wish",
+      "author": "Andrzej Sapkowski",
+      "format": 1,
+      "rating": 18
+    }
+  ],
+  "meta": {
+    "totalItems": 42,
+    "itemCount": 10,
+    "itemsPerPage": 10,
+    "totalPages": 5,
+    "currentPage": 1
+  }
+}
+```
+
+The response is separated into two sections: 
+* data: contains all information about the book
+    * may contain varied amount of fields, as not all fields are required for the book entity
+* meta: contains all meta information:
+    * totalItems – the total number of books owned by the user, regardless of pagination.
+    * itemCount – the number of books returned in the current response page.
+    * itemsPerPage – the maximum number of books allowed per page for this request.
+    * totalPages – the total number of available pages based on totalItems and itemsPerPage.
+    * currentPage – the index of the currently requested page.
+
+*Example response*
+```
+{
+  "data": [
+    {
+      "id": 44,
+      "userId": 6,
+      "title": "Atomic Habits",
+      "author": "James Clear",
+      "isbn": "9780735211292",
+      "format": 3,
+      "length": 320,
+      "coverUrl": "https://images.gr-assets.com/books/1655988385l/40121378.jpg",
+      "rating": 15,
+      "reviewText": "Practical advice, though some parts feel repetitive.",
+      "bookmarkPosition": 80,
+      "startedAt": "2026-01-01",
+      "finishedAt": null,
+      "lastReadAt": "2026-01-20",
+      "addedAt": "2026-01-27T07:56:51.417Z"
+    },
+    {
+      "id": 43,
+      "userId": 6,
+      "title": "The Seven Husbands of Evelyn Hugo",
+      "author": "Taylor Jenkins Reid",
+      "isbn": "9781501161933",
+      "format": 2,
+      "length": 389,
+      "coverUrl": "https://images.gr-assets.com/books/1664458703l/32620332.jpg",
+      "rating": 17,
+      "reviewText": "Very emotional and glamorous. Loved the storytelling format.",
+      "bookmarkPosition": 389,
+      "startedAt": "2024-06-15",
+      "finishedAt": "2024-06-22",
+      "lastReadAt": "2024-06-22",
+      "addedAt": "2026-01-27T07:56:41.860Z"
+    },
+    {
+      "id": 42,
+      "userId": 6,
+      "title": "Dune",
+      "author": "Frank Herbert",
+      "isbn": "9780441172719",
+      "format": 1,
+      "length": 617,
+      "coverUrl": "https://images.gr-assets.com/books/1555447414l/44767458.jpg",
+      "rating": 19,
+      "reviewText": "World-building at its finest, though a bit dense in the middle.",
+      "bookmarkPosition": 150,
+      "startedAt": "2025-12-01",
+      "finishedAt": null,
+      "lastReadAt": "2025-12-28",
+      "addedAt": "2026-01-27T07:56:33.047Z"
+    },
+    {
+      "id": 41,
+      "userId": 6,
+      "title": "Project Hail Mary",
+      "author": "Andy Weir",
+      "isbn": "9780593135204",
+      "format": 1,
+      "length": 473,
+      "coverUrl": "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fplanetary.s3.amazonaws.com%2Fweb%2Fassets%2Fpictures%2Fproject-hail-mary-cover-weir.jpg&f=1&nofb=1&ipt=6ab3700f82827ace8833599c756e1987f3d8871db700021c9dc0e99492accae2",
+      "rating": 20,
+      "reviewText": "Absolutely brilliant sci-fi. A masterclass in pacing.",
+      "bookmarkPosition": 473,
+      "startedAt": "2025-05-10",
+      "finishedAt": "2025-05-20",
+      "lastReadAt": "2025-05-20",
+      "addedAt": "2026-01-27T07:56:18.310Z"
+    },
+    {
+      "id": 8,
+      "userId": 6,
+      "title": "The Witcher: The Last Wish",
+      "author": "Andrzej Sapkowski",
+      "isbn": "9780316438964",
+      "format": 1,
+      "length": 344,
+      "coverUrl": "https://cdn.thestorygraph.com/5brpbfo7dnvo7ubq2dgvpsxpyuiq",
+      "rating": 5,
+      "reviewText": "I'm pretty disappointed...",
+      "bookmarkPosition": 312,
+      "startedAt": "2023-01-15",
+      "finishedAt": null,
+      "lastReadAt": "2024-02-10",
+      "addedAt": "2026-01-26T16:49:09.240Z"
+    }
+  ],
+  "meta": {
+    "totalItems": 13,
+    "itemCount": 5,
+    "itemsPerPage": 8,
+    "totalPages": 2,
+    "currentPage": 2
+  }
+}
+```
+
+### Database and Data Integrity
+
+Each book is associated with its owner via a foreign key:
+
+```
+@ManyToOne(() => User, (user) => user.books, { onDelete: 'CASCADE' })
+user: User;
+```
+
+*This guarantees that:*
+* books cannot exist without a valid owner,
+* deleting a user automatically removes their books,
+* referential integrity is enforced at the database level.
+
+### Frontend Integration
+
+On the frontend, this endpoint is consumed by the BookshelfPage component.
+Pagination metadata is used to:
+* display the current page,
+* limit the number of rendered items,
+* enable future extensions such as sorting and filtering.
