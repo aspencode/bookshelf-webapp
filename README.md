@@ -454,8 +454,22 @@ It interacts directly with the Book entity via a TypeORM repository.
 This service acts as the core of the application’s domain logic.
 
 # Visuals
+This section presents selected screenshots of the user interface to illustrate the main functionalities of the application.
+
+
+## Bookshelf view
+Displays a user’s public bookshelf with a list of added books, including basic metadata and reading progress.
+
+![BookshelfPage-Example](assets/BookshelfPage-Example.png)
+
+## Book Card Component
+A reusable UI component used throughout the application to present a concise summary of a book, such as title, author, format, and rating.
+
 ![BookCard-Example](assets/BookCard-Example.png)
+
+## Book Details View
+
+Shows detailed information about a selected book, including extended metadata, review content, and reading status.
 
 ![BookDetailsPage-Example](assets/BookDetailsPage-Example.png)
 
-![BookshelfPage-Example](assets/BookshelfPage-Example.png)
