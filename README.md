@@ -248,6 +248,9 @@ The application supports tracking reading progress using:
 └── tsconfig.json
 
 ```
+# Database structure
+
+![ERD](assets/ERD.png)
 
 # Description of Main Code Elements
 ## Models
